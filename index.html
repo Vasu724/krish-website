@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krish - Curlyflower Curl Cream</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Arial', sans-serif; }
+    body { background-color: #fff0f5; color:#333; }
+
+    /* Header */
+    header { display:flex; justify-content:space-between; align-items:center; padding:20px 50px; background:#ffccf9; position:sticky; top:0; z-index:100; }
+    header h1 { font-family: 'Georgia', serif; color:#8b008b; }
+    nav a { margin-left:20px; font-weight:bold; color:#4b0082; }
+    nav a:hover { color:#ff1493; }
+
+    /* Hero */
+    .hero { text-align:center; padding:80px 20px; background:#ffe4f5; }
+    .hero img { width:250px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.2); }
+    .hero h2 { font-size:2.5rem; margin:20px 0; color:#8b008b; }
+    .hero p { font-size:1.2rem; margin-bottom:30px; }
+    .hero button { background:#8b008b; color:#fff; padding:15px 30px; border:none; border-radius:10px; font-size:1rem; cursor:pointer; transition:0.3s; }
+    .hero button:hover { background:#ff1493; }
+
+    /* Product Section */
+    .product { display:flex; flex-wrap:wrap; justify-content:center; padding:50px 20px; gap:40px; }
+    .product-card { background:#fff0f5; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.1); padding:20px; width:300px; text-align:center; transition:transform 0.3s; }
+    .product-card:hover { transform:translateY(-10px); }
+    .product-card img { width:200px; border-radius:15px; margin-bottom:20px; }
+    .product-card h3 { font-size:1.5rem; margin-bottom:10px; color:#8b008b; }
+    .product-card p { font-size:1rem; margin-bottom:15px; }
+    .product-card .price { font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#4b0082; }
+    .product-card button { background:#8b008b; color:#fff; padding:10px 20px; border:none; border-radius:10px; cursor:pointer; transition:0.3s; }
+    .product-card button:hover { background:#ff1493; }
+
+    /* Cart */
+    .cart { position:fixed; top:20px; right:20px; background:#ffccf9; padding:15px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); cursor:pointer; z-index:200; }
+    .cart span { font-weight:bold; color:#4b0082; }
+
+    /* Cart Modal */
+    .cart-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:300; }
+    .cart-content { background:#fff0f5; padding:30px; border-radius:20px; width:90%; max-width:500px; position:relative; }
+    .cart-content h2 { margin-bottom:20px; color:#8b008b; }
+    .cart-item { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+    .cart-item input { width:50px; text-align:center; }
+    .cart-total { font-weight:bold; margin-top:15px; color:#4b0082; }
+    .close-cart { position:absolute; top:15px; right:20px; font-size:1.5rem; cursor:pointer; }
+
+    /* Checkout Form */
+    .checkout { display:none; flex-direction:column; margin-top:20px; }
+    .checkout input, .checkout button { padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #ccc; }
+    .checkout button { background:#8b008b; color:#fff; border:none; cursor:pointer; transition:0.3s; }
+    .checkout button:hover { background:#ff1493; }
+
+    /* Footer */
+    footer { background:#ffccf9; padding:20px; text-align:center; font-weight:bold; color:#4b0082; margin-top:50px; }
+
+    /* Responsive */
+    @media(max-width:768px){ .product{ flex-direction:column; align-items:center; } }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Krish</h1>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#product">Product</a>
+        <a href="#contact">Contact</a>
+    </nav>
+</header>
+
+<div class="cart" id="cart-btn">Cart (<span id="cart-count">0</span>)</div>
+
+<section class="hero" id="home">
+    <img src="https://i.ibb.co/2Pz3JHZ/curlyflower.png" alt="Curlyflower Curl Cream">
+    <h2>Curlyflower – Unleash Your Curls!</h2>
+    <p>The ultimate curl cream by Krish. Natural, fun, and full of life – just like your curls!</p>
+    <button onclick="document.getElementById('product').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+</section>
+
+<section class="product" id="product">
+    <div class="product-card" data-name="Curlyflower Curl Cream" data-price="10000">
+        <img src="https://i.ibb.co/2Pz3JHZ/curlyflower.png" alt="Curlyflower Curl Cream">
+        <h3>Curlyflower Curl Cream</h3>
+        <p>Enhance your natural curls with our nourishing formula. Lightweight, non-greasy, perfect for all curl types!</p>
+        <div class="price">10,000 TZS</div>
+        <button onclick="addToCart(this)">Add to Cart</button>
+    </div>
+</section>
+
+<!-- Cart Modal -->
+<div class="cart-modal" id="cart-modal">
+    <div class="cart-content">
+        <span class="close-cart" onclick="closeCart()">&times;</span>
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <div class="cart-total" id="cart-total"></div>
+        <button onclick="checkout()">Proceed to Checkout</button>
+        <div class="checkout" id="checkout-form">
+            <h3>Checkout</h3>
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="phone" placeholder="Phone" required>
+            <input type="text" id="address" placeholder="Address" required>
+            <button onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+</div>
+
+<footer id="contact">
+    © 2025 Krish | Curlyflower Curl Cream | All Rights Reserved
+</footer>
+
+<script>
+let cart = [];
+
+function addToCart(btn){
+    const card = btn.parentElement;
+    const name = card.getAttribute('data-name');
+    const price = parseInt(card.getAttribute('data-price'));
+    
+    let existing = cart.find(item => item.name === name);
+    if(existing) { existing.qty++; }
+    else { cart.push({name, price, qty:1}); }
+    
+    updateCartCount();
+    alert(name + " added to cart!");
+}
+
+function updateCartCount(){
+    const count = cart.reduce((a,b)=> a+b.qty,0);
+    document.getElementById('cart-count').innerText = count;
+}
+
+document.getElementById('cart-btn').addEventListener('click', () => {
+    displayCart();
+    document.getElementById('cart-modal').style.display = 'flex';
+});
+
+function closeCart(){
+    document.getElementById('cart-modal').style.display = 'none';
+}
+
+function displayCart(){
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    cartItems.innerHTML = '';
+    
+    cart.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+            <span>${item.name}</span>
+            <input type="number" value="${item.qty}" min="1" onchange="updateQty(${index}, this.value)">
+            <span>${item.price*item.qty} TZS</span>
+            <button onclick="removeItem(${index})">Remove</button>
+        `;
+        cartItems.appendChild(div);
+    });
+    
+    const total = cart.reduce((a,b)=> a+b.price*b.qty,0);
+    cartTotal.innerText = "Total: " + total + " TZS";
+}
+
+function updateQty(index, value){
+    cart[index].qty = parseInt(value);
+    displayCart();
+    updateCartCount();
+}
+
+function removeItem(index){
+    cart.splice(index,1);
+    displayCart();
+    updateCartCount();
+}
+
+function checkout(){
+    document.getElementById('checkout-form').style.display = 'flex';
+}
+
+function placeOrder(){
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const address = document.getElementById('address').value;
+
+    if(!name || !email || !phone || !address){
+        alert("Please fill all fields!");
+        return;
+    }
+
+    alert("Thank you " + name + "! Your order has been placed successfully.");
+    cart = [];
+    updateCartCount();
+    displayCart();
+    closeCart();
+}
+</script>
+
+</body>
+</html>
